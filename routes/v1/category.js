@@ -7,7 +7,7 @@ const router = require('express').Router();
 let admin = [isLoggedIn, isAdmin]
 
 router.post('/', isAdmin, uploader.single('image'), createCategory);
-router.get('/', isAdmin, getCategories);
+router.get('/', getCategories);
 router.patch('/:id', isAdmin, uploader.single('image'), updatecategory);
 router.delete('/:id', isAdmin, deleteCategory);
 

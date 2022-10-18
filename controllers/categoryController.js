@@ -44,7 +44,7 @@ module.exports.updatecategory = async (req, res) => {
 
             // updload the new image
             const image = await cloudinary.uploader.upload(req.file.path, { public_id: `ecommerce/category/${req.file.filename}` });
-            let updatedCategory = await Category.findOneAndUpdate({_id: catId}, {name: req.body.name, image: image.public_id});
+            let updatedCategory = await Category.findOneAndUpdate({_id: catId}, {name: req.body.name, image: image.public_id}, {new: true});
             return res.status(200).json({
                 category: updatedCategory,
                 message: 'Category has been updated'
@@ -73,7 +73,7 @@ module.exports.deleteCategory = async (req, res) => {
             // delete category image from cloudinary
             await cloudinary.uploader.destroy(category.image);
             await Category.findOneAndDelete({_id: catId});
-            return res.status(200).send("Category has been deleted");
+            return res.status(200).json({message: "Category has been deleted"});
         }
 
     } catch (err) {
