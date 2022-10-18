@@ -33,6 +33,25 @@ module.exports.getProducts = async (req, res) => {
     }
 }
 
+// get a single product by slug
+module.exports.getProduct = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        const product = await Product.findOne({slug}).populate('category');
+        if (product) {
+            return res.status(200).json(product);
+        } else {
+            return res.status(404).json({
+                product: {},
+                message: "Product not found!"
+            })
+        }
+        
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
 // delet a product by slug
 module.exports.deleteProduct = async (req, res) => {
     try {
