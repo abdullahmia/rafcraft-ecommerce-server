@@ -38,6 +38,10 @@ const productSchema = new Schema({
         required: true
     },
     slug: String,
+    status: {
+        type: Boolean,
+        default: false
+    }
 }, {timestamps: true});
 
 productSchema.pre('save', function (next) {

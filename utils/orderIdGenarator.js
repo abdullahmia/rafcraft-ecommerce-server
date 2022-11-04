@@ -1,4 +1,4 @@
-module.exports.skuGenarator = (length = 8) => {
+module.exports.orderIdGenarator = (length = 12) => {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
