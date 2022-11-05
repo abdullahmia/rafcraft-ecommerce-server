@@ -41,6 +41,10 @@ const productSchema = new Schema({
     status: {
         type: Boolean,
         default: false
+    },
+    isFeatured: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true});
 

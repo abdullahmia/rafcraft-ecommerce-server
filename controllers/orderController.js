@@ -1,21 +1,46 @@
 const Order = require('../models/order');
 const { orderIdGenarator } = require('../utils/orderIdGenarator');
+const sendMail = require('../lib/mailer');
+const { generateOrderRecivedTemplate } = require('../utils/orderRecivedTemplateGenarator');
 
 // add order
 module.exports.addOrder = async (req, res) => {
     try {
-        const user = req.user;
         const orderId = await orderIdGenarator();
+        const { products, paymentType, shippingAddress, amount, customerNote, _id } = req.body;
 
-        const addOrder = new Order({user: user.id, orderId, ...req.body});
+        const addOrder = new Order({user: _id, orderId, products, paymentType, shippingAddress, amount});
         await addOrder.save();
-        console.log(addOrder);
+        
+        const { user: orderdUser, products: orderdProducts, orderedId, amount: total } = await (await addOrder.populate('user', '-password')).populate('products.product');
+
+        // sending email
+        const orderRecivedTemplate = await generateOrderRecivedTemplate(orderdUser.firstName + orderdUser.lastName, orderedId, orderdProducts, total);
+        await sendMail(addOrder.shippingAddress.email, 'Your order has been recived', orderRecivedTemplate)
+
         return res.status(200).json({
             orderd: true,
             order: addOrder,
             message: "Thank you. Your order has been received."
         })
 
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+
+// get all orders
+module.exports.getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({}).populate({
+            path: 'products',
+            populate: {
+                path: 'product',
+                model: 'Product'
+            }
+        }).populate('user', '-password').sort({ createdAt: -1 })
+        return res.status(200).json(orders);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }

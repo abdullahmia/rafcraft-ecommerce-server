@@ -48,7 +48,6 @@ const orderSchema = new Schema({
             'Not processed',
             "Confirmed",
             'Processing',
-            'Shipped',
             'Delivered',
             'Cancelled',
         ],
